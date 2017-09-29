@@ -37,7 +37,7 @@ void setup()  // 초기 한번 실행
   pinMode(LR_SW, INPUT_PULLUP);
   pinMode(LED, OUTPUT);
   initLeftRight();
-  TimeLR = 5000;
+  TimeLR = interval;
 }
 
 void loop() //반복
