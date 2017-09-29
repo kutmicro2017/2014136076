@@ -37,7 +37,7 @@ void setup()  // 초기 한번 실행
   pinMode(LR_SW, INPUT_PULLUP);
   pinMode(LED, OUTPUT);
   initLeftRight();
-  //TimeLR = 5000;
+  TimeLR = 5000;
 }
 
 void loop() //반복
@@ -95,7 +95,6 @@ void initUpDown(){
   digitalWrite(UPPER_RED, LOW);  digitalWrite(LOWER_RED, LOW);
   digitalWrite(RIGHT_GREEN, LOW);  digitalWrite(LEFT_GREEN, LOW);
   TimeUD = millis();
-  TimeLR = millis();
   }
   
  void initLeftRight(){
@@ -107,7 +106,6 @@ void initUpDown(){
   digitalWrite(LEFT_RED, LOW);  digitalWrite(RIGHT_RED, LOW);
   digitalWrite(UPPER_GREEN, LOW);  digitalWrite(LOWER_GREEN, LOW);
   TimeLR = millis();
-  TimeUD = millis();
  }
 
 /* void changeUD2LR(){
