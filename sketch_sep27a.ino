@@ -12,7 +12,6 @@
 #define LEFT_GREEN 27  //왼쪽 불
 #define UD_SW 30       //위아래 스위치
 #define LR_SW 32       //양옆 스위치
-#define LED 8
 
 int interval = 10000;
 unsigned long TimeUD;
@@ -20,7 +19,6 @@ unsigned long TimeLR;
 
 void setup()  // 초기 한번 실행
 {
-   Serial.begin(9600);
   pinMode(UPPER_RED, OUTPUT);
   pinMode(UPPER_YELLOW, OUTPUT);
   pinMode(UPPER_GREEN, OUTPUT);
@@ -35,7 +33,6 @@ void setup()  // 초기 한번 실행
   pinMode(LEFT_GREEN, OUTPUT);
   pinMode(UD_SW, INPUT_PULLUP);
   pinMode(LR_SW, INPUT_PULLUP);
-  pinMode(LED, OUTPUT);
   initLeftRight();
   TimeLR = interval;
 }
@@ -107,16 +104,3 @@ void initUpDown(){
   digitalWrite(UPPER_GREEN, LOW);  digitalWrite(LOWER_GREEN, LOW);
   TimeLR = millis();
  }
-
-/* void changeUD2LR(){
-  delay(1000);
-  Blink_UD_LED();
-  initLeftRight();
- }
-
-void changeLR2UD(){
-  delay(1000);
-  Blink_LR_LED();
-  initUpDown();
-}*/
-
