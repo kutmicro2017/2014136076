@@ -34,7 +34,7 @@ void setup()  // 초기 한번 실행
   pinMode(UD_SW, INPUT_PULLUP);
   pinMode(LR_SW, INPUT_PULLUP);
   initLeftRight();
-  TimeLR = interval;
+  TimeUD = -interval;
 }
 
 void loop() //반복
@@ -58,7 +58,7 @@ void loop() //반복
     }
     else if(currentTime > TimeLR + interval && currentTime > TimeUD + interval*2){
       Blink_LR_LED();
-      initUpDown();
+      initUpDown(); 
     }
  }
 }
@@ -104,3 +104,4 @@ void initUpDown(){
   digitalWrite(UPPER_GREEN, LOW);  digitalWrite(LOWER_GREEN, LOW);
   TimeLR = millis();
  }
+ 
