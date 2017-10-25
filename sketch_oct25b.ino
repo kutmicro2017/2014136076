@@ -23,15 +23,15 @@ int signPinCol[8] = { A0, A1, A2, A3, A4, A5, A6, A7 };
 #define DRIVABLE_DURATION           10000u                                                  //주행 가능 시간, 녹색등 유지시간(20sec)
 #define LED_Yellow_BLINK_DURATION   5000u                                                   //경고등 점멸 시간(5sec)
 #define BLINK_TIME                  LED_Yellow_BLINK_DURATION / 1000                        //점멸 횟수(1초당 1회)
-#define TRAFFIC_LIGHT_IDLE_TIME     3000u                                                   //입력 받았을 시 대기 시간(3sec)
+#define LED_DELAY_TIME              3000u                                                   //입력 받았을 시 LED 대기 시간(3sec)
 #define ARRAY_LENGTH                8                                                       //배열 길이
 #define CYCLE                       (DRIVABLE_DURATION + LED_Yellow_BLINK_DURATION) / 1000  //신호 바뀔 때까지의 걸리는 시간
 #define WALK_DURATION               CYCLE * 1000                                            //
 
 //폴링시 필요한 변수
-bool gbChange = false;
+bool state = false;
 //DotMatrix 타이머 출력을 위한 변수
-int gNumbers[10][8][4] =
+int Numbers[10][8][4] =
 {
   // ZERO
   {
@@ -145,7 +145,7 @@ int gNumbers[10][8][4] =
   }
 };
 //DotMatrix 보행자 그림 출력을 위한 변수
-int gWalkerSigns[2][8][8] =
+int WalkerSigns[2][8][8] =
 {
   // Red : Cannot Cross
   {
@@ -218,10 +218,10 @@ void loop()
      int later = t % 10;
      if (t > BLINK_TIME)
      {
-        DisplayStopSignWithPolling(1000, former, later);
-        if (gbChange)
+        DisplayStopSignWithSwitch(1000, former, later);
+        if (state == true)
        {
-        gbChange = false;
+        state = false;
         break;
        }
      }
@@ -247,9 +247,9 @@ void loop()
      if (t > BLINK_TIME)
      {
         DisplayWalkSign(1000);
-        if(gbChange)
+        if(state == true)
        {
-        gbChange = false;
+        state = false;
         break;
        }
      }
@@ -278,13 +278,11 @@ void LR_BlinkYellow()
 
 void LR_LED()
 {
-  for (int t = (TRAFFIC_LIGHT_IDLE_TIME + LED_Yellow_BLINK_DURATION) / 1000; t > 0; --t)
+  for (int t = (LED_DELAY_TIME + LED_Yellow_BLINK_DURATION) / 1000; t > 0; --t)
   {
     if (t > BLINK_TIME)
-    {
       //1초간 보행 신호 출력
       DisplayWalkSign(1000);
-    }
     else
     {
       digitalWrite(Left_Green, LOW);
@@ -295,7 +293,7 @@ void LR_LED()
   digitalWrite(Left_Red, HIGH);
   digitalWrite(Right_Red, HIGH);
   DisplayWalkSign(WALK_DURATION);
-  gbChange = true;
+  state = true;
 }
 
 void UD_BlinkYellow(int former, int later)
@@ -312,13 +310,11 @@ void UD_BlinkYellow(int former, int later)
 
 void UD_LED()
 {
-  for (int t = (TRAFFIC_LIGHT_IDLE_TIME + LED_Yellow_BLINK_DURATION) / 1000; t > 0; --t)
+  for (int t = (LED_DELAY_TIME + LED_Yellow_BLINK_DURATION) / 1000; t > 0; --t)
   {
     if (t > BLINK_TIME)
-    {
       //1초간 타이머 출력
       DisplayStopSign(1000, t / 10, t % 10);
-    }
     else
     {
       digitalWrite(Up_Green, LOW);
@@ -333,10 +329,10 @@ void UD_LED()
   digitalWrite(Right_Red, LOW);
   digitalWrite(Left_Red, LOW);
   DisplayWalkSign(WALK_DURATION);
-  gbChange = true;
+  state = true;
 }
 
-void DisplayStopSignWithPolling(int duration, int former, int later)
+void DisplayStopSignWithSwitch(int duration, int former, int later)
 {
   unsigned timeStart;
   unsigned timeEnd;
@@ -344,8 +340,8 @@ void DisplayStopSignWithPolling(int duration, int former, int later)
   while (timeEnd - timeStart <= duration)
   {
     StopSign();
-    DisplayNumber(gNumbers[former], gNumbers[later]);
-    //Polling
+    DisplayNumber(Numbers[former], Numbers[later]);
+    //Switch ON
     if (digitalRead(SW) == LOW && digitalRead(Up_Green) == HIGH && digitalRead(Down_Green) == HIGH)
       UD_LED();
     timeEnd = millis();
@@ -405,7 +401,7 @@ void StopSign()
     digitalWrite(timePinRow[r], HIGH);
     for(int c = 0; c < 8; ++c)
     {
-      if(gWalkerSigns[0][r][c])
+      if(WalkerSigns[0][r][c])
       {
         digitalWrite(timePinCol[c], LOW);
       }
@@ -424,7 +420,7 @@ void WalkSign()
     digitalWrite(signPinRow[r], HIGH);
     for(int c = 0; c < 8; ++c)
     {
-      if(gWalkerSigns[1][r][c])
+      if(WalkerSigns[1][r][c])
       {
         digitalWrite(signPinCol[c], LOW);
       }
@@ -442,7 +438,7 @@ void DisplayStopSign(int duration, int former, int later)
   while (timeEnd - timeStart <= duration)
   {
     StopSign();
-    DisplayNumber(gNumbers[former], gNumbers[later]);
+    DisplayNumber(Numbers[former], Numbers[later]);
     timeEnd = millis();
   }
 }
@@ -459,4 +455,3 @@ void DisplayWalkSign(unsigned duration)
     timeEnd = millis();
   }
 }
-
